@@ -21,7 +21,7 @@ doing exactly the work you think it is.)
 ## The catalog
 
 The source of truth is [`cant.yaml`](cant.yaml): machine-readable,
-schema-validated, append-only. **v1 (2026-07): 27 techniques.**
+schema-validated, append-only. **v1 (2026-07): 28 techniques.**
 
 Every entry has a stable ID, a genus, the move, the technique in its own
 voice, the counter that works, and **evidence**: no hypothetical entries.
@@ -71,11 +71,13 @@ command, a missing tool, a file a lazy glob won't match).
 | CANT-24 | The Helpful Relocation | self-talk |
 | CANT-25 | The Prerequisite Stall | self-talk |
 | CANT-26 | Motion as Progress | self-talk |
-| CANT-27 | The Assisted Rationalization | hybrid |
+| CANT-27 | The Invented Input | self-talk |
+| CANT-28 | The Assisted Rationalization | hybrid |
 
 Full definitions, quotes, counters, and evidence: [`cant.yaml`](cant.yaml).
 Origin story and worked specimens:
-[the introducing blog post](https://jimbir.ch/blog/27-rationalizations-ai-coding-agents).
+[the introducing blog post](https://jimbir.ch/blog/28-rationalizations-ai-coding-agents).
+Browsable catalog: <https://kanopi.github.io/cant/>.
 
 ## Using CANT
 

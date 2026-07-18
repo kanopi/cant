@@ -170,7 +170,7 @@ entries:
       - type: documented
         source: obra/superpowers verification-before-completion ("Trusting
           agent success reports")
-    related: [CANT-10, CANT-27]
+    related: [CANT-10, CANT-28]
     added: v1
 
   - id: CANT-12
@@ -400,6 +400,26 @@ entries:
     added: v1
 
   - id: CANT-27
+    name: The Invented Input
+    genus: self-talk
+    move: >-
+      Fabricating the content of an input the agent could not access (an
+      unreachable ticket URL, a file that failed to load, a paywalled page)
+      and proceeding as if it had read it.
+    quote: "(Given an unreachable ticket link, the agent drafts a reply to a request it never read.)"
+    counter: >-
+      An identifier is not its content. If the source cannot be fetched,
+      stop, say so, and ask for the content to be pasted; never draft a
+      response to an input you have not read.
+    evidence:
+      - type: documented
+        source: Widely documented chat-assistant behavior since 2023, with
+          assistants confidently summarizing links and documents they could
+          not retrieve; the counter is contract-tested by the Kanopi
+          behavioral eval harness triage case (unreachable-task rule), 2026-07
+    added: v1
+
+  - id: CANT-28
     name: The Assisted Rationalization
     genus: hybrid
     move: >-
