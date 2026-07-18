@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kanopi.github.io/cant/schema/cant-entry.schema.json",
+  "title": "CANT catalog entry",
+  "type": "object",
+  "required": ["id", "name", "genus", "move", "quote", "counter", "evidence", "added"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^CANT-[1-9][0-9]*$",
+      "description": "Stable identifier. Append-only: never renumbered, reused, or removed."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "description": "The technique's memorable name."
+    },
+    "genus": {
+      "type": "string",
+      "enum": ["pretext", "self-talk", "hybrid"],
+      "description": "Who authors the excuse: the user (pretext), the agent (self-talk), or both (hybrid)."
+    },
+    "move": {
+      "type": "string",
+      "minLength": 10,
+      "description": "What the technique does, in one or two sentences."
+    },
+    "quote": {
+      "type": "string",
+      "minLength": 3,
+      "description": "The technique in the excuse's own voice, or a parenthetical description of a non-verbal specimen."
+    },
+    "counter": {
+      "type": "string",
+      "minLength": 10,
+      "description": "The defense that works, phrased so it can be pasted into a skill."
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every entry requires evidence. No hypothetical entries.",
+      "items": {
+        "type": "object",
+        "required": ["type", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["captured", "documented"],
+            "description": "captured = a real transcript/trace; documented = a published source describing the technique."
+          },
+          "source": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "related": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^CANT-[1-9][0-9]*$" }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "deprecated"],
+      "default": "active",
+      "description": "Deprecated entries keep their ID forever; they are never removed."
+    },
+    "added": {
+      "type": "string",
+      "pattern": "^v[1-9][0-9]*$",
+      "description": "The edition in which this entry first appeared."
+    }
+  }
+}
