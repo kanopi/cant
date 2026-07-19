@@ -67,7 +67,7 @@ page = f"""<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CANT — Catalog of Agent Neutralization Techniques</title>
+<title>Catalog of Agent Neutralization Techniques (CANT)</title>
 <meta name="description" content="A named, evidence-backed catalog of the rationalizations AI agents use to break their own rules. {len(entries)} techniques, edition {esc(data['edition'])}.">
 <style>
 :root {{
@@ -108,8 +108,8 @@ footer a {{ color: var(--selftalk); }}
 </head>
 <body>
 <main>
-<h1>CANT</h1>
-<p class="subtitle">The Catalog of Agent Neutralization Techniques: a named, evidence-backed catalog of the rationalizations AI agents use to break their own rules.</p>
+<h1>Catalog of Agent Neutralization Techniques</h1>
+<p class="subtitle">CANT: a named, evidence-backed catalog of the rationalizations AI agents use to break their own rules.</p>
 <p>AI agents rarely fail because they can't do the job. They fail because something, the user or the agent's own reasoning, supplies a justification that makes breaking the rule feel fine. CANT names those moves so you can write defenses against them by name and test for them by name. The term comes from Sykes &amp; Matza's 1957 criminology paper on techniques of neutralization; the English word <em>cant</em>, insincere stock phrases, is doing exactly the work you think it is.</p>
 <p class="meta">Edition {esc(data['edition'])} · {len(entries)} techniques ·
 <a href="cant.yaml">cant.yaml</a> ·

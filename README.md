@@ -1,4 +1,4 @@
-# CANT: Catalog of Agent Neutralization Techniques
+# Catalog of Agent Neutralization Techniques (CANT)
 
 A named, evidence-backed catalog of the rationalizations AI agents use to
 break their own rules: the excuses that precede the violation and permit it.

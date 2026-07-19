@@ -1,4 +1,4 @@
-# CANT: Catalog of Agent Neutralization Techniques
+# Catalog of Agent Neutralization Techniques (CANT)
 # Source of truth. Append-only: IDs are never renumbered, reused, or removed.
 # Every entry requires evidence: a captured specimen (transcript) or a
 # documented source. See README.md for the entry schema and contribution bar.
