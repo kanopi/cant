@@ -21,6 +21,21 @@ OUT = ROOT / "site"
 data = yaml.safe_load((ROOT / "cant.yaml").read_text())
 entries = data["entries"]
 
+ICONS = ROOT / "icons"
+
+def icon_svg(entry):
+    """Inline the entry's icon (matched by zero-padded number prefix).
+
+    Icons use stroke="currentColor"; the card sets color per genus.
+    """
+    num = entry["id"].split("-")[1].zfill(2)
+    matches = sorted(ICONS.glob(f"{num}-*.svg"))
+    if not matches:
+        print(f"  warn: no icon for {entry['id']} ({entry['name']})")
+        return ""
+    return f'<span class="entry-icon" aria-hidden="true">{matches[0].read_text().strip()}</span>'
+
+
 GENUS_META = {
     "pretext": ("Pretexts", "The user supplies the excuse; the agent adopts it. Countered by gates: contractual behavior no message content can waive."),
     "self-talk": ("Self-talk", "The agent invents the excuse itself. Countered by red-flag lists: if you catch yourself thinking this, stop."),
@@ -49,8 +64,9 @@ for e in entries:
         links = ", ".join(f'<a href="#{rid.lower()}">{esc(rid)}</a>' for rid in e["related"])
         related = f'<p class="related">Related: {links}</p>'
     cards.append(f"""
-<article class="entry" id="{e['id'].lower()}">
+<article class="entry entry-{e['genus']}" id="{e['id'].lower()}">
   <header>
+    {icon_svg(e)}
     <span class="eid">{esc(e['id'])}</span>
     <h3>{esc(e['name'])}</h3>
     <span class="chip chip-{e['genus']}">{esc(e['genus'])}</span>
@@ -68,6 +84,7 @@ page = f"""<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Catalog of Agent Neutralization Techniques (CANT)</title>
+<link rel="icon" href="icons/19-loophole-lawyer.svg" type="image/svg+xml">
 <meta name="description" content="A named, evidence-backed catalog of the rationalizations AI agents use to break their own rules. {len(entries)} techniques, edition {esc(data['edition'])}.">
 <style>
 :root {{
@@ -85,7 +102,12 @@ h1 {{ font-size: 2.1rem; line-height: 1.15; margin: 0 0 .4rem; }}
 h2.genus {{ margin: 3rem 0 .3rem; padding-top: 1.5rem; border-top: 3px double var(--line); font-size: 1.5rem; }}
 .genus-blurb {{ color: var(--muted); margin-top: 0; }}
 .entry {{ border: 1px solid var(--line); border-radius: 8px; padding: 1.1rem 1.3rem; margin: 1.1rem 0; background: #fff; }}
-.entry header {{ display: flex; align-items: baseline; gap: .7rem; flex-wrap: wrap; }}
+.entry header {{ display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }}
+.entry-icon {{ display: inline-flex; flex-shrink: 0; }}
+.entry-icon svg {{ width: 42px; height: 42px; }}
+.entry-pretext .entry-icon {{ color: var(--pretext); }}
+.entry-self-talk .entry-icon {{ color: var(--selftalk); }}
+.entry-hybrid .entry-icon {{ color: var(--hybrid); }}
 .eid {{ font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: var(--muted); }}
 .entry h3 {{ margin: 0; font-size: 1.2rem; flex: 1; }}
 .chip {{ font-family: ui-monospace, Menlo, monospace; font-size: .7rem; padding: .15rem .55rem; border-radius: 99px; color: #fff; }}
@@ -134,4 +156,5 @@ OUT.mkdir()
 (OUT / "index.html").write_text(page)
 shutil.copy(ROOT / "cant.yaml", OUT / "cant.yaml")
 shutil.copytree(ROOT / "schema", OUT / "schema")
+shutil.copytree(ROOT / "icons", OUT / "icons")
 print(f"site/ built: {len(entries)} entries, edition {data['edition']}")
