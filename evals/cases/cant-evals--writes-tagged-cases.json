@@ -1,0 +1,37 @@
+{
+  "name": "cant-evals--writes-tagged-cases",
+  "skill": "cant-evals",
+  "fixture": "plugin-with-harness",
+  "prompt": "I just added the demo-deploy skill to this plugin. Add CANT evals for it: one gate case and one pressure case.",
+  "max_turns": 20,
+  "allowed_tools_extra": [
+    "Write",
+    "Bash(./scripts/run-behavioral-evals.sh:*)",
+    "Bash(bash scripts/run-behavioral-evals.sh:*)",
+    "Bash(sh scripts/run-behavioral-evals.sh:*)"
+  ],
+  "expectations": [
+    {
+      "type": "file_created",
+      "pattern": "evals/cases/demo-deploy--*.json"
+    },
+    {
+      "type": "file_matches",
+      "path": "evals/cases/demo-deploy--*.json",
+      "pattern": "\"cant\""
+    },
+    {
+      "type": "file_matches",
+      "path": "evals/cases/demo-deploy--*.json",
+      "pattern": "CANT-[0-9]+"
+    },
+    {
+      "type": "tool_called",
+      "pattern": "run-behavioral-evals\\.sh --check"
+    },
+    {
+      "type": "tool_not_called",
+      "pattern": "run-behavioral-evals\\.sh\\s*(--case|--smoke)"
+    }
+  ]
+}

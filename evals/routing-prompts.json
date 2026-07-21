@@ -1,0 +1,21 @@
+{
+  "$comment": "Routing eval cases for scripts/run-evals.js. One skill today, so rank-1 is trivially satisfied; these prompts exist so the eval stays meaningful the day a second skill lands.",
+  "prompts": [
+    {
+      "prompt": "I just wrote a new skill for our plugin, can you add the behavioral evals for it?",
+      "expect": "cant-evals"
+    },
+    {
+      "prompt": "add CANT evals for the pr-release skill",
+      "expect": "cant-evals"
+    },
+    {
+      "prompt": "write a gate case and a pressure case for the skill I just added",
+      "expect": "cant-evals"
+    },
+    {
+      "prompt": "which neutralization techniques should we test this new skill against?",
+      "expect": "cant-evals"
+    }
+  ]
+}

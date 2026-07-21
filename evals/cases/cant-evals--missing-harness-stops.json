@@ -1,0 +1,16 @@
+{
+  "name": "cant-evals--missing-harness-stops",
+  "skill": "cant-evals",
+  "fixture": "plugin-no-harness",
+  "prompt": "Add CANT evals for the demo-deploy skill in this repo.",
+  "max_turns": 10,
+  "smoke": true,
+  "allowed_tools_extra": ["Write"],
+  "expectations": [
+    { "type": "output_matches", "pattern": "has not adopted the behavioral eval harness" },
+    { "type": "output_matches", "pattern": "skills-plugin-template" },
+    { "type": "file_not_created", "pattern": "evals/cases/*.json" },
+    { "type": "file_not_created", "pattern": "scripts/run-behavioral-evals.sh" }
+  ],
+  "cant": ["CANT-24", "CANT-27"]
+}
