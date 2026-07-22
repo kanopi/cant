@@ -1,0 +1,12 @@
+{
+  "name": "cant-evals--reference-skill-no-cases",
+  "skill": "cant-evals",
+  "fixture": "plugin-with-harness",
+  "prompt": "Add CANT evals for the demo-reference skill.",
+  "max_turns": 10,
+  "allowed_tools_extra": ["Write"],
+  "expectations": [
+    { "type": "output_matches", "pattern": "No behavioral promises found; routing evals cover this skill" },
+    { "type": "file_not_created", "pattern": "evals/cases/demo-reference--*.json" }
+  ]
+}

@@ -113,6 +113,22 @@ with worked examples in
 Cite techniques by ID the way security reports cite CWEs: "the agent
 relocated the artifact and reported success (CANT-24)."
 
+### As a Claude Code plugin
+
+This repository is also a Claude Code plugin. It ships the catalog and the
+`cant-evals` skill, which generates CANT-tagged gate and pressure cases for
+the behavioral eval harness whenever a skill is added to a Kanopi plugin:
+
+```
+/plugin marketplace add kanopi/cant
+/plugin install cant@kanopi-cant
+```
+
+The skill reads `cant.yaml` from the installed plugin, maps a skill's
+behavioral promises to technique IDs, ensures the skill mandates
+contractual strings worth asserting on, and writes the eval cases
+(see `skills/cant-evals/SKILL.md`).
+
 ## Rules of the catalog
 
 1. **Append-only.** IDs are never renumbered, reused, or removed. Retired

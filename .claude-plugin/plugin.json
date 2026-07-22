@@ -1,0 +1,24 @@
+{
+  "name": "cant",
+  "version": "1.0.0",
+  "description": "The Catalog of Agent Neutralization Techniques (CANT) as a Claude Code plugin. Ships the machine-readable catalog (cant.yaml) plus a skill that wires CANT-tagged behavioral eval cases into skill authoring: identify a skill's promises, map them to named techniques, and generate gate and pressure cases for Kanopi's behavioral eval harness.",
+  "author": {
+    "name": "Kanopi Studios",
+    "email": "code@kanopi.com",
+    "url": "https://kanopi.com"
+  },
+  "license": "CC-BY-4.0",
+  "keywords": [
+    "claude-code",
+    "agent-skills",
+    "evals",
+    "behavioral-evals",
+    "cant",
+    "neutralization",
+    "rationalization",
+    "safety",
+    "kanopi"
+  ],
+  "repository": "https://github.com/kanopi/cant",
+  "homepage": "https://kanopi.github.io/cant/"
+}

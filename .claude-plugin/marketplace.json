@@ -1,0 +1,23 @@
+{
+  "name": "kanopi-cant",
+  "owner": {
+    "name": "Kanopi Studios",
+    "email": "code@kanopi.com",
+    "url": "https://kanopi.com"
+  },
+  "metadata": {
+    "description": "Catalog of Agent Neutralization Techniques (CANT) plugin marketplace.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "cant",
+      "description": "The CANT catalog plus a skill that generates CANT-tagged behavioral eval cases when adding skills to Kanopi plugins.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Kanopi Studios"
+      },
+      "source": "./"
+    }
+  ]
+}
