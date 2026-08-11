@@ -81,6 +81,10 @@ Browsable catalog: <https://kanopi.github.io/cant/>.
 
 ## Using CANT
 
+Full guide, with worked examples for both the reference harness and
+promptfoo: <https://kanopi.github.io/cant/using.html>
+(source: [`pages/using.html`](pages/using.html)).
+
 ### In skill/instruction files
 
 Write defenses that name the technique. A vague "be careful" does nothing;
