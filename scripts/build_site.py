@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Render cant.yaml into a static site at site/.
+"""Render cant.yaml and the docs pages into a static site at site/.
 
 Output:
   site/index.html   - the catalog, one card per entry
+  site/using.html   - how to use CANT (body from pages/using.html)
   site/cant.yaml    - the machine-readable catalog, served verbatim
   site/schema/      - the entry schema, served verbatim
+  site/icons/       - entry icons, served verbatim
 
 No templating dependencies; python3 + pyyaml only.
 """
@@ -17,11 +19,118 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "site"
+PAGES = ROOT / "pages"
+ICONS = ROOT / "icons"
 
 data = yaml.safe_load((ROOT / "cant.yaml").read_text())
 entries = data["entries"]
 
-ICONS = ROOT / "icons"
+
+def esc(s):
+    return html.escape(str(s).strip())
+
+
+STYLE = """
+:root {
+  --ink: #1a2330; --paper: #fbfaf7; --muted: #5b6673;
+  --pretext: #9a3b3b; --selftalk: #2c5f7c; --hybrid: #6d4d9c;
+  --line: #e3ded4;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 17px/1.6 Georgia, 'Times New Roman', serif; color: var(--ink); background: var(--paper); }
+main { max-width: 46rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 .4rem; }
+.subtitle { color: var(--muted); font-style: italic; margin-top: 0; }
+.meta { font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: var(--muted); margin: 1.2rem 0 0; }
+.meta a { color: inherit; }
+.nav { font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: var(--muted); margin: 0 0 2.2rem; }
+.nav a { color: var(--selftalk); }
+.nav .here { color: var(--ink); font-weight: bold; }
+h2.genus { margin: 3rem 0 .3rem; padding-top: 1.5rem; border-top: 3px double var(--line); font-size: 1.5rem; }
+.genus-blurb { color: var(--muted); margin-top: 0; }
+.entry { border: 1px solid var(--line); border-radius: 8px; padding: 1.1rem 1.3rem; margin: 1.1rem 0; background: #fff; }
+.entry header { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
+.entry-icon { display: inline-flex; flex-shrink: 0; }
+.entry-icon svg { width: 42px; height: 42px; }
+.entry-pretext .entry-icon { color: var(--pretext); }
+.entry-self-talk .entry-icon { color: var(--selftalk); }
+.entry-hybrid .entry-icon { color: var(--hybrid); }
+.eid { font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: var(--muted); }
+.entry h3 { margin: 0; font-size: 1.2rem; flex: 1; }
+.chip { font-family: ui-monospace, Menlo, monospace; font-size: .7rem; padding: .15rem .55rem; border-radius: 99px; color: #fff; }
+.chip-pretext { background: var(--pretext); }
+.chip-self-talk { background: var(--selftalk); }
+.chip-hybrid { background: var(--hybrid); }
+.quote { margin: .8rem 0; padding: .5rem 1rem; border-left: 3px solid var(--line); font-style: italic; color: #3c4654; }
+.move { margin: .6rem 0; }
+.counter { margin: .6rem 0; }
+details { font-size: .9rem; color: var(--muted); }
+summary { cursor: pointer; }
+.evidence { margin: .4rem 0 0; padding-left: 1.2rem; }
+.ev-type { font-family: ui-monospace, Menlo, monospace; font-size: .7rem; padding: .05rem .4rem; border-radius: 4px; background: var(--line); }
+.ev-captured { background: #d8ead8; }
+.related { font-size: .85rem; color: var(--muted); margin-bottom: 0; }
+.related a { color: var(--selftalk); }
+footer { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
+footer a { color: var(--selftalk); }
+.doc a { color: var(--selftalk); }
+.doc .lede { font-size: 1.05rem; }
+.doc h2 { margin: 3rem 0 .6rem; padding-top: 1.5rem; border-top: 3px double var(--line); font-size: 1.5rem; }
+.doc h3 { margin: 2.1rem 0 .4rem; font-size: 1.18rem; }
+.doc h4 { margin: 1.6rem 0 .3rem; font-size: 1rem; }
+.doc ol, .doc ul { padding-left: 1.3rem; }
+.doc li { margin: .4rem 0; }
+pre { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: .8rem 1rem; overflow-x: auto; font-size: .82rem; line-height: 1.55; }
+code { font-family: ui-monospace, Menlo, monospace; font-size: .88em; }
+:not(pre) > code { background: #f1eee7; padding: .05rem .3rem; border-radius: 4px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: .92rem; }
+th, td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: ui-monospace, Menlo, monospace; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.callout { border-left: 3px solid var(--pretext); background: #fff; padding: .3rem 1rem; margin: 1.4rem 0; font-size: .95rem; }
+"""
+
+NAV = [("index.html", "The catalog"), ("using.html", "Using CANT")]
+
+FOOTER = """<footer>
+<p>Authored by <a href="https://jimbir.ch">Jim Birch</a> at <a href="https://kanopi.com">Kanopi Studios</a>.
+Built on Jesse Vincent's <a href="https://github.com/obra/superpowers">Superpowers</a> red-flag pattern and
+<a href="https://github.com/addyosmani/agent-skills">Addy Osmani's agent-skills</a> eval model.
+Reference harness: <a href="https://github.com/kanopi/skills-plugin-template">kanopi/skills-plugin-template</a>.</p>
+</footer>"""
+
+
+def nav(active):
+    items = [
+        f'<span class="here">{esc(label)}</span>'
+        if href == active
+        else f'<a href="{href}">{esc(label)}</a>'
+        for href, label in NAV
+    ]
+    return '<nav class="nav">' + " · ".join(items) + "</nav>"
+
+
+def shell(title, description, body, active):
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{esc(title)}</title>
+<link rel="icon" href="icons/19-loophole-lawyer.svg" type="image/svg+xml">
+<meta name="description" content="{esc(description)}">
+<style>{STYLE}</style>
+</head>
+<body>
+<main>
+{nav(active)}
+{body}
+{FOOTER}
+</main>
+</body>
+</html>
+"""
+
 
 def icon_svg(entry):
     """Inline the entry's icon (matched by zero-padded number prefix).
@@ -41,9 +150,6 @@ GENUS_META = {
     "self-talk": ("Self-talk", "The agent invents the excuse itself. Countered by red-flag lists: if you catch yourself thinking this, stop."),
     "hybrid": ("Hybrids", "A pretext lowers the bar; the agent's own loophole finishes the job. Countered by both, plus structural safety graded on the attempt."),
 }
-
-def esc(s):
-    return html.escape(str(s).strip())
 
 cards = []
 current_genus = None
@@ -78,83 +184,37 @@ for e in entries:
   {related}
 </article>""")
 
-page = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Catalog of Agent Neutralization Techniques (CANT)</title>
-<link rel="icon" href="icons/19-loophole-lawyer.svg" type="image/svg+xml">
-<meta name="description" content="A named, evidence-backed catalog of the rationalizations AI agents use to break their own rules. {len(entries)} techniques, edition {esc(data['edition'])}.">
-<style>
-:root {{
-  --ink: #1a2330; --paper: #fbfaf7; --muted: #5b6673;
-  --pretext: #9a3b3b; --selftalk: #2c5f7c; --hybrid: #6d4d9c;
-  --line: #e3ded4;
-}}
-* {{ box-sizing: border-box; }}
-body {{ margin: 0; font: 17px/1.6 Georgia, 'Times New Roman', serif; color: var(--ink); background: var(--paper); }}
-main {{ max-width: 46rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }}
-h1 {{ font-size: 2.1rem; line-height: 1.15; margin: 0 0 .4rem; }}
-.subtitle {{ color: var(--muted); font-style: italic; margin-top: 0; }}
-.meta {{ font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: var(--muted); margin: 1.2rem 0 0; }}
-.meta a {{ color: inherit; }}
-h2.genus {{ margin: 3rem 0 .3rem; padding-top: 1.5rem; border-top: 3px double var(--line); font-size: 1.5rem; }}
-.genus-blurb {{ color: var(--muted); margin-top: 0; }}
-.entry {{ border: 1px solid var(--line); border-radius: 8px; padding: 1.1rem 1.3rem; margin: 1.1rem 0; background: #fff; }}
-.entry header {{ display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }}
-.entry-icon {{ display: inline-flex; flex-shrink: 0; }}
-.entry-icon svg {{ width: 42px; height: 42px; }}
-.entry-pretext .entry-icon {{ color: var(--pretext); }}
-.entry-self-talk .entry-icon {{ color: var(--selftalk); }}
-.entry-hybrid .entry-icon {{ color: var(--hybrid); }}
-.eid {{ font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: var(--muted); }}
-.entry h3 {{ margin: 0; font-size: 1.2rem; flex: 1; }}
-.chip {{ font-family: ui-monospace, Menlo, monospace; font-size: .7rem; padding: .15rem .55rem; border-radius: 99px; color: #fff; }}
-.chip-pretext {{ background: var(--pretext); }}
-.chip-self-talk {{ background: var(--selftalk); }}
-.chip-hybrid {{ background: var(--hybrid); }}
-.quote {{ margin: .8rem 0; padding: .5rem 1rem; border-left: 3px solid var(--line); font-style: italic; color: #3c4654; }}
-.move {{ margin: .6rem 0; }}
-.counter {{ margin: .6rem 0; }}
-details {{ font-size: .9rem; color: var(--muted); }}
-summary {{ cursor: pointer; }}
-.evidence {{ margin: .4rem 0 0; padding-left: 1.2rem; }}
-.ev-type {{ font-family: ui-monospace, Menlo, monospace; font-size: .7rem; padding: .05rem .4rem; border-radius: 4px; background: var(--line); }}
-.ev-captured {{ background: #d8ead8; }}
-.related {{ font-size: .85rem; color: var(--muted); margin-bottom: 0; }}
-.related a {{ color: var(--selftalk); }}
-footer {{ margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted); }}
-footer a {{ color: var(--selftalk); }}
-</style>
-</head>
-<body>
-<main>
-<h1>Catalog of Agent Neutralization Techniques</h1>
+index_body = f"""<h1>Catalog of Agent Neutralization Techniques</h1>
 <p class="subtitle">CANT: a named, evidence-backed catalog of the rationalizations AI agents use to break their own rules.</p>
 <p>AI agents rarely fail because they can't do the job. They fail because something, the user or the agent's own reasoning, supplies a justification that makes breaking the rule feel fine. CANT names those moves so you can write defenses against them by name and test for them by name. The term comes from Sykes &amp; Matza's 1957 criminology paper on techniques of neutralization; the English word <em>cant</em>, insincere stock phrases, is doing exactly the work you think it is.</p>
+<p><a href="using.html">How to use the catalog</a>: in instruction files, in behavioral evals (including promptfoo), and in incident reports.</p>
 <p class="meta">Edition {esc(data['edition'])} · {len(entries)} techniques ·
 <a href="cant.yaml">cant.yaml</a> ·
 <a href="schema/cant-entry.schema.json">schema</a> ·
 <a href="https://github.com/kanopi/cant">GitHub</a> ·
 CC BY 4.0</p>
-{''.join(cards)}
-<footer>
-<p>Authored by <a href="https://jimbir.ch">Jim Birch</a> at <a href="https://kanopi.com">Kanopi Studios</a>.
-Built on Jesse Vincent's <a href="https://github.com/obra/superpowers">Superpowers</a> red-flag pattern and
-<a href="https://github.com/addyosmani/agent-skills">Addy Osmani's agent-skills</a> eval model.
-Reference harness: <a href="https://github.com/kanopi/skills-plugin-template">kanopi/skills-plugin-template</a>.</p>
-</footer>
-</main>
-</body>
-</html>
-"""
+{''.join(cards)}"""
+
+index_page = shell(
+    "Catalog of Agent Neutralization Techniques (CANT)",
+    f"A named, evidence-backed catalog of the rationalizations AI agents use to break their own rules. {len(entries)} techniques, edition {data['edition']}.",
+    index_body,
+    "index.html",
+)
+
+using_page = shell(
+    "Using CANT",
+    "How to use the Catalog of Agent Neutralization Techniques: naming techniques in agent instruction files, tagging behavioral eval cases (reference harness or promptfoo), and citing techniques in reports.",
+    (PAGES / "using.html").read_text().strip(),
+    "using.html",
+)
 
 if OUT.exists():
     shutil.rmtree(OUT)
 OUT.mkdir()
-(OUT / "index.html").write_text(page)
+(OUT / "index.html").write_text(index_page)
+(OUT / "using.html").write_text(using_page)
 shutil.copy(ROOT / "cant.yaml", OUT / "cant.yaml")
 shutil.copytree(ROOT / "schema", OUT / "schema")
 shutil.copytree(ROOT / "icons", OUT / "icons")
-print(f"site/ built: {len(entries)} entries, edition {data['edition']}")
+print(f"site/ built: {len(entries)} entries, edition {data['edition']}; pages: index.html, using.html")
