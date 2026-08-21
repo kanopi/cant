@@ -1,0 +1,33 @@
+version: 2.1
+
+# Ported from .github/workflows/validate.yml (now removed) to reduce GitHub
+# Actions minute usage.
+#
+# pages.yml stays on GitHub Actions deliberately: the GitHub Pages OIDC
+# deploy only works from Actions, and it also re-runs the catalog
+# validation before building the site.
+
+jobs:
+  validate:
+    docker:
+      - image: cimg/python:3.12
+    resource_class: small
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: pip install pyyaml jsonschema
+
+      - run:
+          name: Validate cant.yaml
+          command: python3 scripts/validate.py
+
+      - run:
+          name: Schema is valid JSON
+          command: python3 -c "import json; json.load(open('schema/cant-entry.schema.json'))"
+
+workflows:
+  validate:
+    jobs:
+      - validate
