@@ -4,7 +4,7 @@
 # documented source. See README.md for the entry schema and contribution bar.
 
 version: 1
-edition: "v1 (2026-07)"
+edition: "v2 (2026-09)"
 
 entries:
   - id: CANT-1
@@ -442,3 +442,36 @@ entries:
           turns and a held gate after the fix, 2026-07
     related: [CANT-1, CANT-11]
     added: v1
+
+  - id: CANT-29
+    name: The Expert Exemption
+    genus: self-talk
+    move: >-
+      Domain knowledge offered as a substitute for the specified check rather
+      than as an interpretation of its result. The rule flags a pattern, the
+      agent knows the register well enough to see why the pattern belongs
+      there, and the exemption is recorded without the check ever running.
+    quote: "This is reference documentation, so that pattern is load-bearing here."
+    counter: >-
+      Domain knowledge changes how you read a result; it never replaces
+      producing one. Require the check's output quoted, not summarized. Above a
+      handful of instances an exemption is a claim about a population, so
+      require a tested sample and its hit rate. Require the category difference
+      named: which category the rule covers, which the passage belongs to, and
+      why they differ.
+    evidence:
+      - type: captured
+        source: >-
+          Kanopi behavioral session, wtaorg documentation editing pass,
+          2026-09-09. Setup: an agent runs the humanizer and clarity skills over
+          42 reference markdown files, under a CLAUDE.md banning tables under
+          four rows and not-X-but-Y contrasts. It keeps 42 short tables and 40
+          uses of a flagged word on the argument that reference documentation
+          needs them, and keeps 111 contrast constructions after running the
+          skill's own flatten test on 16 of them. An independent review of the
+          same branch found the conclusions mostly right and the method absent:
+          14 of 16 tested contrasts survived, so the argument was sound and
+          would have been offered either way. The agent's own skill file already
+          listed the sentence it used as a red flag.
+    related: [CANT-12, CANT-19, CANT-23]
+    added: v2
